@@ -1,2 +1,24 @@
-# ESTCube-2 Visualization
-Project idea is to create model of ESTCube-2 and make it visualize different components of ESTCube-2. User has ability to click buttons and it will shows this component on the cube itself.
+# estcube-2-visualization
+
+## Project setup
+```
+npm install
+```
+
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
