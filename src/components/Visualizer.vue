@@ -12,6 +12,7 @@
 
 <script>
 import * as THREE from 'three'
+import loader from '@/utils/modelLoader'
 
 export default {
   name: 'Visualizer',
@@ -22,10 +23,14 @@ export default {
     renderer: undefined,
     camera: undefined,
     scene: undefined,
-    cube: undefined
+    cube: undefined,
+
+    loader: loader,
+    model: undefined,
+    modelScale: new THREE.Vector3(0.0008, 0.0008, 0.0008)
   }),
 
-  mounted() {
+  async mounted() {
     this.canvas = document.querySelector("#c");
 
     this.renderer = new THREE.WebGLRenderer({canvas: this.canvas});
@@ -41,12 +46,18 @@ export default {
 
     this.scene = new THREE.Scene();
 
-    const boxWidth = 1;
-    const boxHeight = 1;
-    const boxDepth = 1;
-    const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+    // const boxWidth = 1;
+    // const boxHeight = 1;
+    // const boxDepth = 1;
+    // const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
     const material = new THREE.MeshBasicMaterial({color: 0x44aa88});
-    this.cube = new THREE.Mesh(geometry, material);
+
+    this.cube = await loader.load("/estcube.fbx");
+    // this.cube.material = material;
+
+    this.setMaterialRecursive(material, this.cube);
+    this.cube.scale = this.modelScale;
+
     this.scene.add(this.cube);
     this.renderer.render(this.scene, this.camera);
 
@@ -62,6 +73,14 @@ export default {
       this.cube.rotation.y += 0.02;
 
       this.renderer.render(this.scene, this.camera);
+    },
+
+    setMaterialRecursive(material, mesh) {
+      mesh.material = material;
+      console.log("setting material for ", mesh);
+      for (const child of mesh.children) {
+        this.setMaterialRecursive(material, child);
+      }
     },
 
     resizeCanvasToDisplaySize() {
