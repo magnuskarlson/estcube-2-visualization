@@ -1,24 +1,13 @@
-# estcube-2-visualization
+# ESTCube 2 Visualization
+
+## Members
+Magnus Karlson, Adrian Kirikal, Hei Chun Shum
+
+## Description
+Project idea is to make ESTCube 2 visulazation, where user can interact with it. Also there will be VR possibility for that.
 
 ## Project setup
 ```
 npm install
-```
-
-### Compiles and hot-reloads for development
-```
 npm run serve
 ```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
