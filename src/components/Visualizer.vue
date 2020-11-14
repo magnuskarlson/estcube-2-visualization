@@ -12,7 +12,8 @@
 
 <script>
 import * as THREE from 'three'
-import loader from '@/utils/modelLoader'
+import camera from '@/utils/camera'
+import model from '@/utils/model'
 
 export default {
   name: 'Visualizer',
@@ -21,12 +22,9 @@ export default {
     t: THREE,
     canvas: undefined,
     renderer: undefined,
-    camera: undefined,
+    camera: camera,
     scene: undefined,
-    cube: undefined,
-
-    loader: loader,
-    modelScale: new THREE.Vector3(0.0008, 0.0008, 0.0008)
+    cube: undefined
   }),
 
   async mounted() {
@@ -34,14 +32,6 @@ export default {
 
     this.renderer = new THREE.WebGLRenderer({canvas: this.canvas});
     this.renderer.setSize(this.canvas.width, this.canvas.height, false);
-
-
-    const fov = 75;
-    const aspect = 2;  // the canvas default
-    const near = 0.1;
-    const far = 5;
-    this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    this.camera.position.z = 2;
 
     this.scene = new THREE.Scene();
 
@@ -51,14 +41,11 @@ export default {
     // const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
     // const material = new THREE.MeshBasicMaterial({color: 0x44aa88});
 
-    this.$options.mesh = await loader.load("/estcube.fbx");
     // this.cube.material = material;
 
     // this.setMaterialRecursive(material, this.$options.mesh);
-    this.$options.mesh.scale.x = this.modelScale.x;
-    this.$options.mesh.scale.y= this.modelScale.y;
-    this.$options.mesh.scale.z = this.modelScale.z;
 
+    this.$options.mesh = await model.create()
 
     const light = new THREE.AmbientLight( 0xffffff ); // soft white light
     this.scene.add( light );
