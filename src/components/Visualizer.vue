@@ -1,8 +1,15 @@
 <template>
   <v-container style="width: 100%; height: 100%" fluid class="pa-0">
     <v-row class="pa-5" no-gutters>
-      <v-col>
-        <v-btn style="z-index: 1" class="mr-2" v-for="btn in buttons" :key="btn.action" @click="currentView = btn.action" small depressed color="primary">{{ btn.name }}</v-btn>
+      <v-col md="3">
+        <v-select
+            style="z-index: 1"
+            v-model="currentView"
+            :items="viewAngels"
+            item-text="name"
+            item-value="action"
+            label="Viewpoint"
+        ></v-select>
       </v-col>
     </v-row>
     <v-row class="text-center ma-0" no-gutters>
@@ -30,7 +37,7 @@ export default {
     camera: camera,
     scene: undefined,
     cube: undefined,
-    buttons: [{name: 'Default', action: 0}, {name: 'Front', action: 1}, {name: 'Back', action: 2}, {name: 'Left', action: 3}, {name: 'Right', action: 4}, {name: 'Top', action: 5}, {name: 'Bottom', action: 6}],
+    viewAngels: [{name: 'Default', action: 0}, {name: 'Front', action: 1}, {name: 'Back', action: 2}, {name: 'Left', action: 3}, {name: 'Right', action: 4}, {name: 'Top', action: 5}, {name: 'Bottom', action: 6}],
     currentView: 0
   }),
 
