@@ -1,6 +1,7 @@
 import * as FBXLoader from 'three/examples/jsm/loaders/FBXLoader'
 
 const loader = new FBXLoader.FBXLoader()
+loader.resourcePath = "/";
 
 export default {
     load(path, onProgress) {

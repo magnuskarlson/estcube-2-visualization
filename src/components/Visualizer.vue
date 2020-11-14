@@ -26,7 +26,6 @@ export default {
     cube: undefined,
 
     loader: loader,
-    model: undefined,
     modelScale: new THREE.Vector3(0.0008, 0.0008, 0.0008)
   }),
 
@@ -50,34 +49,43 @@ export default {
     // const boxHeight = 1;
     // const boxDepth = 1;
     // const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-    const material = new THREE.MeshBasicMaterial({color: 0x44aa88});
+    // const material = new THREE.MeshBasicMaterial({color: 0x44aa88});
 
-    this.cube = await loader.load("/estcube.fbx");
+    this.$options.mesh = await loader.load("/estcube.fbx");
     // this.cube.material = material;
 
-    this.setMaterialRecursive(material, this.cube);
-    this.cube.scale = this.modelScale;
+    // this.setMaterialRecursive(material, this.$options.mesh);
+    this.$options.mesh.scale.x = this.modelScale.x;
+    this.$options.mesh.scale.y= this.modelScale.y;
+    this.$options.mesh.scale.z = this.modelScale.z;
 
-    this.scene.add(this.cube);
+
+    const light = new THREE.AmbientLight( 0xffffff ); // soft white light
+    this.scene.add( light );
+    this.scene.add(this.$options.mesh);
+    this.renderer.setClearColor( 0xffffff, 1 );
     this.renderer.render(this.scene, this.camera);
 
     this.resizeCanvasToDisplaySize();
     this.animate();
   },
 
+  mesh: undefined,
+
   methods: {
     animate() {
       requestAnimationFrame(this.animate);
 
-      this.cube.rotation.x += 0.01;
-      this.cube.rotation.y += 0.02;
+      this.$options.mesh.rotation.x += 0.01;
+      this.$options.mesh.rotation.y += 0.02;
 
       this.renderer.render(this.scene, this.camera);
     },
 
     setMaterialRecursive(material, mesh) {
+
       mesh.material = material;
-      console.log("setting material for ", mesh);
+
       for (const child of mesh.children) {
         this.setMaterialRecursive(material, child);
       }
