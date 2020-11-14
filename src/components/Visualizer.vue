@@ -1,7 +1,12 @@
 <template>
   <v-container style="width: 100%; height: 100%" fluid class="pa-0">
-    <v-row class="text-center ma-0" style="width: 100%; height: 100%" no-gutters>
-      <v-col cols="12" style="width: 100%; height: 100%">
+    <v-row class="pa-5" no-gutters>
+      <v-col>
+        <v-btn style="z-index: 1" class="mr-2" v-for="btn in buttons" :key="btn.action" @click="currentView = btn.action" small depressed color="primary">{{ btn.name }}</v-btn>
+      </v-col>
+    </v-row>
+    <v-row class="text-center ma-0" no-gutters>
+      <v-col cols="12">
 
         <canvas id="c" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0"></canvas>
 
@@ -24,7 +29,9 @@ export default {
     renderer: undefined,
     camera: camera,
     scene: undefined,
-    cube: undefined
+    cube: undefined,
+    buttons: [{name: 'Default', action: 0}, {name: 'Front', action: 1}, {name: 'Back', action: 2}, {name: 'Left', action: 3}, {name: 'Right', action: 4}, {name: 'Top', action: 5}, {name: 'Bottom', action: 6}],
+    currentView: 0
   }),
 
   async mounted() {
@@ -62,10 +69,53 @@ export default {
   methods: {
     animate() {
       requestAnimationFrame(this.animate);
+      this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(90.0);
 
-      this.$options.mesh.rotation.x += 0.01;
-      this.$options.mesh.rotation.y += 0.02;
+      switch(this.currentView){
+          // Default - rotation
+        case 0:{
+          this.$options.mesh.rotation.y += THREE.MathUtils.degToRad(1.0);
+          break;
+        }
 
+          // Front
+        case 1:{
+          this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(90.0);
+          break;
+        }
+
+          // Back
+        case 2:{
+          this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(270.0);
+          break;
+        }
+
+          // Left
+        case 3:{
+          this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(0.0);
+          break;
+        }
+
+        // Right
+        case 4:{
+          this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(180.0);
+          break;
+        }
+
+        // Top
+        case 5:{
+          this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(270.0);
+          this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(0.0);
+          break;
+        }
+
+        // Bottom
+        case 6:{
+          this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(90.0);
+          this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(0.0);
+          break;
+        }
+      }
       this.renderer.render(this.scene, this.camera);
     },
 

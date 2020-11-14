@@ -32,6 +32,10 @@ export default {
     Visualizer,
   },
 
+  created() {
+    document.title = 'ESTCube - 2 Visualization';
+  },
+
   data: () => ({
     //
   }),
