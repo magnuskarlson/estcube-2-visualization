@@ -1,21 +1,11 @@
 <template>
-  <v-container style="width: 100%; height: 100%" fluid class="pa-0">
-    <v-row class="pa-5" no-gutters>
-      <v-col md="3">
-        <v-select
-            style="z-index: 1"
-            v-model="currentView"
-            @input="changeViewpoint"
-            :items="viewAngels"
-            item-text="name"
-            item-value="action"
-            label="Viewpoint"
-        ></v-select>
-      </v-col>
-    </v-row>
+  <v-container style="width: 100%; height: 100%; position: relative;" fluid class="pa-0">
+    <ViewPositions @viewChanged="changeViewpoint" :current-view="currentView" :view-angels="viewAngels"/>
+    <ComponentHighlighting :model="model"/>
     <v-row class="text-center ma-0" no-gutters>
       <v-col cols="12">
-        <canvas id="c" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0"></canvas>
+        <canvas id="c"
+                style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: url(/background.jpg) no-repeat center center; background-size: cover"></canvas>
       </v-col>
     </v-row>
   </v-container>
@@ -25,10 +15,12 @@
 import * as THREE from 'three'
 import camera from '@/utils/camera'
 import model from '@/utils/model'
+import ViewPositions from "@/components/ViewPositions";
+import ComponentHighlighting from "@/components/ComponentHighlighting";
 
 export default {
   name: 'Visualizer',
-
+  components: {ComponentHighlighting, ViewPositions},
   data: () => ({
     t: THREE,
     canvas: undefined,
@@ -46,33 +38,30 @@ export default {
       {name: 'Bottom', action: 6}],
     currentView: 0,
     mouseDown: false,
-    mousePos: [0, 0]
+    mousePos: [0, 0],
+
+    model: undefined
   }),
 
   async mounted() {
     this.canvas = document.querySelector("#c");
 
-    this.renderer = new THREE.WebGLRenderer({canvas: this.canvas});
+    this.renderer = new THREE.WebGLRenderer({canvas: this.canvas, alpha: true});
     this.renderer.setSize(this.canvas.width, this.canvas.height, false);
 
     this.scene = new THREE.Scene();
 
-    // const boxWidth = 1;
-    // const boxHeight = 1;
-    // const boxDepth = 1;
-    // const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-    // const material = new THREE.MeshBasicMaterial({color: 0x44aa88});
+    this.model = await model.create();
 
-    // this.cube.material = material;
+    // this.scene.attach(this.$options.mesh.childMap.esail);
 
-    // this.setMaterialRecursive(material, this.$options.mesh);
+    const light = new THREE.AmbientLight(0xffffff); // soft white light
+    this.scene.add(light);
+    this.scene.add(this.model);
 
-    this.$options.mesh = await model.create()
+    console.log(this.scene);
 
-    const light = new THREE.AmbientLight( 0xffffff ); // soft white light
-    this.scene.add( light );
-    this.scene.add(this.$options.mesh);
-    this.renderer.setClearColor( 0xffffff, 1 );
+    this.renderer.setClearColor(0xffffff, 0);
     this.renderer.render(this.scene, this.camera);
 
     this.resizeCanvasToDisplaySize();
@@ -87,81 +76,86 @@ export default {
     window.addEventListener("mousewheel", this.updateCamera);
   },
 
-  mesh: undefined,
-
   methods: {
-    onMouseDown(event){
+    onMouseDown(event) {
       event.preventDefault();
       this.mouseDown = true;
       this.mousePos = [event.clientX, event.clientY];
     },
 
-    onMouseUp(event){
+    viewChanged(val) {
+      this.currentView = val;
+    },
+
+    onMouseUp(event) {
       event.preventDefault();
       this.mouseDown = false;
     },
 
-    onMouseMove(event){
-      if(this.mouseDown){
+    onMouseMove(event) {
+      if (this.mouseDown) {
         event.preventDefault();
         const mouseDelta = [event.clientX - this.mousePos[0], event.clientY - this.mousePos[1]];
         this.mousePos = [event.clientX, event.clientY];
-        this.$options.mesh.rotation.x += THREE.MathUtils.degToRad(mouseDelta[1]);
-        this.$options.mesh.rotation.y += THREE.MathUtils.degToRad(mouseDelta[0]);
+        this.model.rotation.x += THREE.MathUtils.degToRad(mouseDelta[1]);
+        this.model.rotation.y += THREE.MathUtils.degToRad(mouseDelta[0]);
       }
     },
 
     // Changes object rotation
-    changeViewpoint(viewpoint){
-      this.$options.mesh.rotation.x = 0.0;
-      switch(viewpoint){
-        // Front
-        case 1:{
-          this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(90.0);
-          this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(90.0);
+    changeViewpoint(viewpoint) {
+
+      this.currentView = viewpoint;
+
+      this.model.rotation.x = 0.0;
+      switch (viewpoint) {
+          // Front
+        case 1: {
+          this.model.rotation.y = THREE.MathUtils.degToRad(90.0);
+          this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
           break;
         }
 
           // Back
-        case 2:{
-          this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(270.0);
-          this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(90.0);
+        case 2: {
+          this.model.rotation.y = THREE.MathUtils.degToRad(270.0);
+          this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
           break;
         }
 
           // Left
-        case 3:{
-          this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(0.0);
-          this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(90.0);
+        case 3: {
+          this.model.rotation.y = THREE.MathUtils.degToRad(0.0);
+          this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
           break;
         }
 
           // Right
-        case 4:{
-          this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(180.0);
-          this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(90.0);
+        case 4: {
+          this.model.rotation.y = THREE.MathUtils.degToRad(180.0);
+          this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
           break;
         }
 
           // Top
-        case 5:{
-          this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(270.0);
-          this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(0.0);
+        case 5: {
+          this.model.rotation.y = THREE.MathUtils.degToRad(270.0);
+          this.model.rotation.z = THREE.MathUtils.degToRad(0.0);
           break;
         }
 
           // Bottom
-        case 6:{
-          this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(90.0);
-          this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(0.0);
+        case 6: {
+          this.model.rotation.y = THREE.MathUtils.degToRad(90.0);
+          this.model.rotation.z = THREE.MathUtils.degToRad(0.0);
           break;
         }
       }
     },
 
-    updateCamera(event){
+    updateCamera(event) {
       const temp = this.camera.fov + event.deltaY / 50;
-      if(temp > 0 && temp < 180){
+      if (temp > 0 && temp < 180) {
         this.camera.fov = temp;
         camera.updateProjectionMatrix();
       }
@@ -169,26 +163,20 @@ export default {
 
     animate() {
       requestAnimationFrame(this.animate);
+      this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
 
-      switch(this.currentView){
+      switch (this.currentView) {
 
-        // Default - rotation
-        case 0:{
-          this.$options.mesh.rotation.y += THREE.MathUtils.degToRad(1.0);
-          this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(90.0);
+          // Default - rotation
+        case 0: {
+          if (!this.mouseDown) {
+            this.model.rotation.y += THREE.MathUtils.degToRad(1.0);
+            this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
+          }
           break;
         }
       }
       this.renderer.render(this.scene, this.camera);
-    },
-
-    setMaterialRecursive(material, mesh) {
-
-      mesh.material = material;
-
-      for (const child of mesh.children) {
-        this.setMaterialRecursive(material, child);
-      }
     },
 
     resizeCanvasToDisplaySize() {
