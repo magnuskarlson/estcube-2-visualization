@@ -20,11 +20,17 @@
   </v-row>
 </template>
 <script>
+
+import HighlightPanel from "@/utils/highlightPanel";
+import * as THREE from "three";
+
 export default {
   name: 'ComponentHighlighting',
 
   props: {
     model: {},
+    camera: {},
+    scene: {},
   },
 
   data() {
@@ -67,7 +73,9 @@ export default {
           label: "StarTracker",
           name: "startracker"
         }
-      ]
+      ],
+
+      panel: undefined
     }
   },
 
@@ -82,6 +90,19 @@ export default {
       this.model.resetHighlight();
       if (this.selected.length) {
         this.highlight();
+
+        if (!this.panel) {
+          this.panel = HighlightPanel.createHighlightPlane(new THREE.Vector3(-1, 0, 0), this.camera, this.scene);
+        }
+      } else {
+        if (this.panel) {
+          this.scene.remove(this.panel);
+          this.panel.geometry.dispose();
+          this.panel.material.dispose();
+          this.panel = undefined;
+        }
+
+        console.log("remove panel");
       }
     }
   }

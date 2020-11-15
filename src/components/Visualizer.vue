@@ -1,7 +1,15 @@
 <template>
   <v-container style="width: 100%; height: 100%; position: relative;" fluid class="pa-0">
-    <ViewPositions @viewChanged="changeViewpoint" :current-view="currentView" :view-angels="viewAngels"/>
-    <ComponentHighlighting :model="model"/>
+    <ViewPositions
+        @viewChanged="changeViewpoint"
+        :current-view="currentView"
+        :view-angels="viewAngels"
+    />
+    <ComponentHighlighting
+        :model="model"
+        :camera="camera"
+        :scene="scene"
+    />
     <v-row class="text-center ma-0" no-gutters>
       <v-col cols="12">
         <canvas id="c"
@@ -40,7 +48,9 @@ export default {
     mouseDown: false,
     mousePos: [0, 0],
 
-    model: undefined
+    model: undefined,
+
+    panel: undefined
   }),
 
   async mounted() {
