@@ -5,6 +5,7 @@
         <v-select
             style="z-index: 1"
             v-model="currentView"
+            @input="changeViewpoint"
             :items="viewAngels"
             item-text="name"
             item-value="action"
@@ -14,9 +15,7 @@
     </v-row>
     <v-row class="text-center ma-0" no-gutters>
       <v-col cols="12">
-
         <canvas id="c" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0"></canvas>
-
       </v-col>
     </v-row>
   </v-container>
@@ -37,8 +36,17 @@ export default {
     camera: camera,
     scene: undefined,
     cube: undefined,
-    viewAngels: [{name: 'Default', action: 0}, {name: 'Front', action: 1}, {name: 'Back', action: 2}, {name: 'Left', action: 3}, {name: 'Right', action: 4}, {name: 'Top', action: 5}, {name: 'Bottom', action: 6}],
-    currentView: 0
+    viewAngels: [
+      {name: 'Default', action: 0},
+      {name: 'Front', action: 1},
+      {name: 'Back', action: 2},
+      {name: 'Left', action: 3},
+      {name: 'Right', action: 4},
+      {name: 'Top', action: 5},
+      {name: 'Bottom', action: 6}],
+    currentView: 0,
+    mouseDown: false,
+    mousePos: [0, 0]
   }),
 
   async mounted() {
@@ -69,57 +77,105 @@ export default {
 
     this.resizeCanvasToDisplaySize();
     this.animate();
+
+    // Rotating object with mouse
+    this.canvas.addEventListener('pointerdown', this.onMouseDown, false);
+    this.canvas.addEventListener('pointerup', this.onMouseUp, false);
+    this.canvas.addEventListener('pointermove', this.onMouseMove, false);
+
+    // Zooming with mousewheel
+    window.addEventListener("mousewheel", this.updateCamera);
   },
 
   mesh: undefined,
 
   methods: {
-    animate() {
-      requestAnimationFrame(this.animate);
-      this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(90.0);
+    onMouseDown(event){
+      event.preventDefault();
+      this.mouseDown = true;
+      this.mousePos = [event.clientX, event.clientY];
+    },
 
-      switch(this.currentView){
-          // Default - rotation
-        case 0:{
-          this.$options.mesh.rotation.y += THREE.MathUtils.degToRad(1.0);
-          break;
-        }
+    onMouseUp(event){
+      event.preventDefault();
+      this.mouseDown = false;
+    },
 
-          // Front
+    onMouseMove(event){
+      if(this.mouseDown){
+        event.preventDefault();
+        const mouseDelta = [event.clientX - this.mousePos[0], event.clientY - this.mousePos[1]];
+        this.mousePos = [event.clientX, event.clientY];
+        this.$options.mesh.rotation.x += THREE.MathUtils.degToRad(mouseDelta[1]);
+        this.$options.mesh.rotation.y += THREE.MathUtils.degToRad(mouseDelta[0]);
+      }
+    },
+
+    // Changes object rotation
+    changeViewpoint(viewpoint){
+      this.$options.mesh.rotation.x = 0.0;
+      switch(viewpoint){
+        // Front
         case 1:{
           this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(90.0);
+          this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(90.0);
           break;
         }
 
           // Back
         case 2:{
           this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(270.0);
+          this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(90.0);
           break;
         }
 
           // Left
         case 3:{
           this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(0.0);
+          this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(90.0);
           break;
         }
 
-        // Right
+          // Right
         case 4:{
           this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(180.0);
+          this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(90.0);
           break;
         }
 
-        // Top
+          // Top
         case 5:{
           this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(270.0);
           this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(0.0);
           break;
         }
 
-        // Bottom
+          // Bottom
         case 6:{
           this.$options.mesh.rotation.y = THREE.MathUtils.degToRad(90.0);
           this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(0.0);
+          break;
+        }
+      }
+    },
+
+    updateCamera(event){
+      const temp = this.camera.fov + event.deltaY / 50;
+      if(temp > 0 && temp < 180){
+        this.camera.fov = temp;
+        camera.updateProjectionMatrix();
+      }
+    },
+
+    animate() {
+      requestAnimationFrame(this.animate);
+
+      switch(this.currentView){
+
+        // Default - rotation
+        case 0:{
+          this.$options.mesh.rotation.y += THREE.MathUtils.degToRad(1.0);
+          this.$options.mesh.rotation.z = THREE.MathUtils.degToRad(90.0);
           break;
         }
       }
