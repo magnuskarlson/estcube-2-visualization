@@ -89,8 +89,16 @@ export default {
   methods: {
     onMouseDown(event) {
       event.preventDefault();
-      this.mouseDown = true;
       this.mousePos = [event.clientX, event.clientY];
+      switch(event.which){
+      case 1:
+      this.mouseDownLeft = true;
+      break;
+      case 2:
+      this.mouseDownMid = true;
+      break;
+      default:
+    }
     },
 
     viewChanged(val) {
@@ -99,14 +107,19 @@ export default {
 
     onMouseUp(event) {
       event.preventDefault();
-      this.mouseDown = false;
+      this.mouseDownLeft = false;
+      this.mouseDownMid = false;
     },
 
     onMouseMove(event) {
-      if (this.mouseDown) {
-        event.preventDefault();
-        const mouseDelta = [event.clientX - this.mousePos[0], event.clientY - this.mousePos[1]];
-        this.mousePos = [event.clientX, event.clientY];
+      event.preventDefault();
+      const mouseDelta = [event.clientX - this.mousePos[0], event.clientY - this.mousePos[1]];
+      this.mousePos = [event.clientX, event.clientY];
+      if (this.mouseDownMid) {
+        this.model.position.x += mouseDelta[0] * 0.005;
+        this.model.position.y += mouseDelta[1] * -0.005;
+      }
+      if (this.mouseDownLeft) {
         this.model.rotation.x += THREE.MathUtils.degToRad(mouseDelta[1]);
         this.model.rotation.y += THREE.MathUtils.degToRad(mouseDelta[0]);
       }
