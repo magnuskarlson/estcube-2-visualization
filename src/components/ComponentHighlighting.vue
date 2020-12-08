@@ -1,23 +1,17 @@
 <template>
-  <v-row style="position: absolute; top: 0; right: 0; flex-grow: 0; z-index: 1" class="mr-0">
-    <v-col>
-      <v-card class="highlight">
-        <v-select
-            label="Highlight"
-            multiple
-            :items="items"
-            item-text="label"
-            item-value="name"
-            v-model="selected"
-            clearable
-            hide-details
-            style="z-index: 1; background: white;max-width: 200px"
-            class="pt-4 pa-2 pb-0"
-        >
-        </v-select>
-      </v-card>
-    </v-col>
-  </v-row>
+  <v-select
+      label="Highlight"
+      multiple
+      :items="items"
+      item-text="label"
+      item-value="name"
+      v-model="selected"
+      clearable
+      hide-details
+      filled
+      style="z-index: 1; background: white;"
+  >
+  </v-select>
 </template>
 <script>
 
