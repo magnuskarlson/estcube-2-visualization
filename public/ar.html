@@ -8,11 +8,19 @@
     </script>
 </head>
 <body style="margin : 0px; overflow: hidden;">
-<a-scene embedded arjs>
+<a-scene embedded vr-mode-ui="enabled: false;" arjs="debugUIEnabled: false;">
+    <a-assets>
+      <a-asset-item id="cubeModel" src="estcube.fbx"></a-asset-item>
+    </a-assets>
     <!-- define your markers -->
     <a-marker preset='hiro'>
         <!-- here define the content to display on top of the marker -->
-        <a-box position='0 0.5 0' material='color: red;'></a-box>
+        <!--<a-box position='0 0.5 0' material='color: red;'></a-box> -->
+        <a-entity   position="0 0 0"
+                  rotation="0 0 0"
+                  scale="0.10 0.10 0.10"
+                  gltf-model="#cubeModel" >
+      </a-entity>
     </a-marker>
     <!-- define a simple camera -->
     <a-entity camera></a-entity>
