@@ -14,30 +14,25 @@
           width="40"
         />
       </div>
-      <v-btn color="success" @click="ARViewOpen = !ARViewOpen">{{ARViewOpen ? 'Back' : 'AR'}}</v-btn>
     </v-app-bar>
     <v-main>
-     <ArVisualizer v-if="ARViewOpen"/>
-     <Visualizer v-else />
+     <Visualizer/>
     </v-main>
   </v-app>
 </template>
 
 <script>
 import Visualizer from './components/Visualizer';
-import ArVisualizer from './components/ArVisualizer';
 export default {
   name: 'App',
   components: {
-    Visualizer,
-    ArVisualizer,
+    Visualizer
   },
   created() {
     document.title = 'ESTCube - 2 Visualization';
   },
   data(){
     return {
-      ARViewOpen: false
     }
   },
   methods:{

@@ -2,19 +2,50 @@
   <v-container style="width: 100%; height: 100%; position: relative;" fluid class="pa-0">
     <v-row justify="space-between" class="pa-5" no-gutters>
       <v-col cols="5" md="2">
-        <ViewPositions
-            @viewChanged="changeViewpoint"
-            :current-view="currentView"
-            :view-angels="viewAngels"
-        />
-      </v-col>
-      <v-col cols="5" md="2">
         <ComponentHighlighting
             :model="model"
             :camera="camera"
             :scene="scene"
         />
       </v-col>
+    </v-row>
+    <v-row justify="space-between" class="pa-5" no-gutters>
+    <v-col cols="5" md="2">
+   <v-btn-toggle v-model="toggle_exclusive">
+    <v-tooltip bottom style="z-index:1;">
+    <template v-slot:activator="{ on, attrs }">
+    <v-btn depressed style="z-index:1;" x-large v-bind="attrs" v-on="on" @click="currentView == 1 ? changeViewpoint(2) : changeViewpoint(1)">
+      <v-img lazy-src='frontBack.ico' max-height="50" max-width="50" src='frontBack.ico'></v-img>
+    </v-btn>
+  </template>
+  <span>{{currentView == 1 ? 'Back' : 'Front'}}</span>
+</v-tooltip>
+<v-tooltip bottom style="z-index:1;">
+<template v-slot:activator="{ on, attrs }">
+    <v-btn depressed style="z-index:1;" x-large v-bind="attrs" v-on="on" @click="currentView == 5 ? changeViewpoint(6) : changeViewpoint(5)">
+      <v-img lazy-src='topBottom.ico' max-height="50" max-width="50" src='topBottom.ico'></v-img>
+    </v-btn>
+  </template>
+  <span>{{currentView == 5 ? 'Bottom' : 'Top'}}</span>
+</v-tooltip>
+<v-tooltip bottom style="z-index:1;">
+<template v-slot:activator="{ on, attrs }">
+   <v-btn depressed style="z-index:1;" x-large v-bind="attrs" v-on="on" @click="currentView == 3 ? changeViewpoint(4) : changeViewpoint(3)">
+     <v-img lazy-src='leftRight.ico' max-height="50" max-width="50" src='leftRight.ico'></v-img>
+   </v-btn>
+ </template>
+  <span>{{currentView == 3 ? 'Right' : 'Left'}}</span>
+</v-tooltip>
+<v-tooltip bottom style="z-index:1;">
+<template v-slot:activator="{ on, attrs }">
+   <v-btn depressed style="z-index:1;" x-large v-bind="attrs" v-on="on" @click="viewChanged(0)">
+     <v-img lazy-src='default.ico' max-height="50" max-width="50" src='default.ico'></v-img>
+   </v-btn>
+ </template>
+ <span>Default</span>
+</v-tooltip>
+ </v-btn-toggle>
+    </v-col>
     </v-row>
     <v-row no-gutters>
       <v-col cols="12">
@@ -126,7 +157,6 @@ export default {
 
     // Changes object rotation
     changeViewpoint(viewpoint) {
-
       this.currentView = viewpoint;
 
       this.model.rotation.x = 0.0;
