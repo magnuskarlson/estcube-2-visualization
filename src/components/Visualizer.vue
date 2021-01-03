@@ -57,7 +57,13 @@ export default {
       model: undefined,
 
       panel: undefined,
-      panelUpdate: undefined
+      panelUpdate: undefined,
+
+      zoomDelta: 0,
+
+      lastDelta: undefined,
+      rotSpeed: undefined,
+      speedDecay: 0.90
     }
   },
   async mounted() {
@@ -91,6 +97,9 @@ export default {
 
     // Zooming with mousewheel
     window.addEventListener("mousewheel", this.updateCamera);
+
+    this.zoomDelta = this.model.scale.clone()
+    this.zoomDelta.multiplyScalar(0.1);
   },
 
   created() {
@@ -119,6 +128,14 @@ export default {
     onMouseUp(event) {
       event.preventDefault();
       this.mouseEvent = 0;
+      this.rotSpeed = this.lastDelta;
+      this.lastDelta = undefined;
+    },
+
+    rotateModel(delta) {
+      const coeff = 0.2;
+      this.model.rotation.x += THREE.MathUtils.degToRad(delta[1] * coeff);
+      this.model.rotation.y += THREE.MathUtils.degToRad(delta[0] * coeff);
     },
 
     onMouseMove(event) {
@@ -131,12 +148,10 @@ export default {
         this.currentView = 0;
       }
       if (this.mouseEvent === 1) {
-        this.model.rotation.x += THREE.MathUtils.degToRad(mouseDelta[1]);
-        this.model.rotation.y += THREE.MathUtils.degToRad(mouseDelta[0]);
         this.currentView = 0;
+        this.rotateModel(mouseDelta);
+        this.lastDelta = mouseDelta;
       }
-
-
     },
 
     setPanelUpdate(func){
@@ -149,35 +164,45 @@ export default {
     },
 
     updateCamera(event) {
-      const temp = this.camera.fov + event.deltaY / 50;
-      if (temp > 0 && temp < 180) {
-        this.camera.fov = temp;
-        camera.updateProjectionMatrix();
-      }
+      const delta = this.zoomDelta.clone();
+
+      delta.multiplyScalar(event.deltaY / 100);
+      this.model.scale.add(delta);
     },
 
     animate() {
       requestAnimationFrame(this.animate);
+
+      if (this.rotSpeed) {
+        this.rotateModel(this.rotSpeed);
+        this.rotSpeed[0] *= this.speedDecay;
+        this.rotSpeed[1] *= this.speedDecay;
+
+        if (Math.sqrt(this.rotSpeed[0] * this.rotSpeed[0] + this.rotSpeed[1] * this.rotSpeed[1]) < 0.2) {
+          this.rotSpeed = undefined;
+        }
+      }
+
       this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
 
       switch (this.currentView) {
 
-          // Default - rotation
-        case 7: {
-          if (!this.mouseDown) {
-            this.model.rotation.y += THREE.MathUtils.degToRad(1.0);
-            this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
-          }
-          break;
-        }
+        // Default - rotation
+      case 7: {
+      if (!this.mouseDown) {
+      this.model.rotation.y += THREE.MathUtils.degToRad(1.0);
+      this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
+      }
+      break;
+      }
       }
 
       if (this.panelUpdate) {
-        this.panelUpdate();
+      this.panelUpdate();
       }
 
       this.renderer.render(this.scene, this.camera);
-    },
+      },
 
     resizeCanvasToDisplaySize() {
       const canvas = this.renderer.domElement;
