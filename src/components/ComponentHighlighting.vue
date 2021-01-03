@@ -66,12 +66,12 @@ export default {
         {
           label: "E-sail",
           name: "esail",
-          description: ""
+          description: "The electric solar wind sail is a novel method of propulsion within the Solar system using the flow of electrically charged particles emanating from the Sun, or the solar wind."
         },
         {
           label: "Cameras",
           name: "cameras",
-          description: ""
+          description: "CAM is the satellite's on-board camera. It is used during the mission to take images of the tether, the endmass, and the Earth."
         },
         {
           label: "Reaction wheels",

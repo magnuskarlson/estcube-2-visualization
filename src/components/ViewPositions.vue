@@ -33,7 +33,7 @@ export default {
     return {
       view: this.currentView,
       btns: [
-        {img: require('../assets/views/default.png'), text: 'Default', action: 0},
+        {img: require('../assets/views/default2.png'), text: 'Default', action: 7},
         {img: require('../assets/views/front.png'), text: 'Front', action: 1},
         {img: require('../assets/views/back.png'), text: 'Back', action: 2},
         {img: require('../assets/views/left.png'), text: 'Left', action: 3},

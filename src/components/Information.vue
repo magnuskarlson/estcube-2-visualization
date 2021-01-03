@@ -17,7 +17,7 @@ export default {
     return {
       infos: [
         {img: require('../assets/info/lmb.png'), text: 'For rotating model.'},
-        {img: require('../assets/info/mmb.png'), text: 'For zooming in to the model.'},
+        {img: require('../assets/info/mmb-scroll.png'), text: 'For zooming in to the model.'},
         {img: require('../assets/info/mmb.png'), text: 'For panning or moving around the model.'},
       ]
     }
