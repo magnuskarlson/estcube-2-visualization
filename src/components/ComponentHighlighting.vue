@@ -8,7 +8,7 @@
           </v-col>
         </v-row>
         <v-btn-toggle color="primary" v-model="selected" style="display: unset">
-          <v-row v-for="item in items">
+          <v-row v-for="item in items" :key="item.id">
             <v-col class="pb-0">
               <v-btn elevation="-1" style="z-index: 1" :value="item.name">
                 {{item.label}}
