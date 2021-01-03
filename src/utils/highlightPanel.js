@@ -17,48 +17,16 @@ function createTrackingLine(pos, model, targetName) {
 
 export default {
     createHighlightPlane(pos, camera, scene, model, targetName) {
-        const bitmap = document.createElement('canvas');
-        const g = bitmap.getContext('2d');
-        bitmap.width = 400;
-        bitmap.height = 400;
-        g.font = '40px Arial';
-
-        const text = "TODO: some text";
-
-        g.fillStyle = 'white';
-        g.fillRect(0, 0, bitmap.width, bitmap.height)
-
-        g.fillStyle = 'black';
-        g.fillText(text, 0, 40);
-
-
-        const texture = new THREE.Texture(bitmap)
-        texture.needsUpdate = true;
-
-        const geometry = new THREE.PlaneGeometry( 0.5, 0.5, 64 );
-        const material = new THREE.MeshBasicMaterial( {color: 0xffffff, map: texture, transparent: true} );
-        const plane = new THREE.Mesh( geometry, material );
-        plane.position.copy(pos);
-        plane.quaternion.copy(camera.quaternion);
-
-        scene.add(plane);
-
         let line = createTrackingLine(pos, model, targetName);
 
         scene.add( line );
 
-        console.log(line);
 
         return {
-            plane: plane,
             line: line,
             scene: scene,
 
             destroy() {
-                this.scene.remove(this.plane);
-                this.plane.geometry.dispose();
-                this.plane.material.dispose();
-
                 this.scene.remove(this.line);
                 this.line.geometry.dispose();
                 this.line.material.dispose();

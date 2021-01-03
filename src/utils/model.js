@@ -11,13 +11,14 @@ const allowMaterialOpacity = (mesh) => {
             for (let i = 0; i < mesh.material.length; i++) {
                 let m = mesh.material[i];
                 m.transparent = true;
+                m.side = THREE.DoubleSide;
                 m.opacity = 1;
                 mesh.material[i] = m.clone();
             }
         } else {
             mesh.material.transparent = true;
             mesh.material.opacity = 1;
-
+            mesh.material.side = THREE.DoubleSide;
             mesh.material = mesh.material.clone();
         }
 
@@ -30,6 +31,7 @@ const allowMaterialOpacity = (mesh) => {
 
 Mesh.prototype.setOpacity = function (val) {
     if (this.material) {
+        this.visible = val !== 0;
         if (this.material instanceof Array) {
             this.material.forEach(m => m.opacity = val);
         } else {
@@ -117,7 +119,8 @@ export default {
         model.highlighted = [];
 
         model.highlightPart = function (scene, ...names) {
-            this.setOpacity(0.1);
+            this.setOpacity(0);
+            this.childMap["panels_and_stuff"].setOpacity(0.2);
 
             for (const name of names) {
                 let target = this.childMap[name];
