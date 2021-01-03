@@ -14,6 +14,10 @@
           width="40"
         />
       </div>
+
+      <div style="font-size: 24px" class="ml-4">
+        ESTCube-2
+      </div>
     </v-app-bar>
     <v-main>
      <Visualizer/>

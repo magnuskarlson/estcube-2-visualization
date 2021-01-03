@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-col cols="6" md="2">
+      <v-col cols="6" md="4">
         <ComponentHighlighting
             :model="model"
             :camera="camera"
@@ -10,13 +10,14 @@
         />
       </v-col>
       <v-spacer></v-spacer>
-      <v-col cols="6" md="3">
+      <v-col cols="6" md="5">
         <ViewPositions
             @viewChanged="changeViewpoint"
         />
       </v-col>
     </v-row>
-    <canvas id="c" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: url(/background.jpg) no-repeat center center; background-size: cover"></canvas>
+    <canvas id="c"
+            style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: url(/background.jpg) no-repeat center center; background-size: cover"></canvas>
     <Information/>
   </v-container>
 </template>
@@ -59,7 +60,7 @@ export default {
       panel: undefined,
       panelUpdate: undefined,
 
-      zoomDelta: 0,
+      zoomDelta: 1.2,
 
       lastDelta: undefined,
       rotSpeed: undefined,
@@ -98,8 +99,6 @@ export default {
     // Zooming with mousewheel
     window.addEventListener("mousewheel", this.updateCamera);
 
-    this.zoomDelta = this.model.scale.clone()
-    this.zoomDelta.multiplyScalar(0.1);
   },
 
   created() {
@@ -154,7 +153,7 @@ export default {
       }
     },
 
-    setPanelUpdate(func){
+    setPanelUpdate(func) {
       this.panelUpdate = func;
     },
     // Changes object rotation
@@ -164,10 +163,7 @@ export default {
     },
 
     updateCamera(event) {
-      const delta = this.zoomDelta.clone();
-
-      delta.multiplyScalar(event.deltaY / 100);
-      this.model.scale.add(delta);
+      this.model.scale.multiplyScalar(event.deltaY < 0 ? this.zoomDelta : 2 - this.zoomDelta);
     },
 
     animate() {
@@ -187,22 +183,22 @@ export default {
 
       switch (this.currentView) {
 
-        // Default - rotation
-      case 7: {
-      if (!this.mouseDown) {
-      this.model.rotation.y += THREE.MathUtils.degToRad(1.0);
-      this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
-      }
-      break;
-      }
+          // Default - rotation
+        case 7: {
+          if (!this.mouseDown) {
+            this.model.rotation.y += THREE.MathUtils.degToRad(1.0);
+            this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
+          }
+          break;
+        }
       }
 
       if (this.panelUpdate) {
-      this.panelUpdate();
+        this.panelUpdate();
       }
 
       this.renderer.render(this.scene, this.camera);
-      },
+    },
 
     resizeCanvasToDisplaySize() {
       const canvas = this.renderer.domElement;

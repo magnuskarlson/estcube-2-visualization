@@ -1,24 +1,30 @@
 <template>
   <div>
-    <v-select
-        label="Highlight"
-        :items="items"
-        item-text="label"
-        item-value="name"
-        v-model="selected"
-        clearable
-        hide-details
-        filled
-        style="z-index: 1; background: white;"
-    >
-    </v-select>
+    <v-row no-gutters>
+      <v-col>
+        <v-row>
+          <v-col class="pt-0 pb-0" style="color: white; z-index: 1; font-size: 20px">
+            Highlight components
+          </v-col>
+        </v-row>
+        <v-btn-toggle color="primary" v-model="selected" style="display: unset">
+          <v-row v-for="item in items">
+            <v-col class="pb-0">
+              <v-btn elevation="-1" style="z-index: 1" :value="item.name">
+                {{item.label}}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-btn-toggle>
+      </v-col>
+    </v-row>
 
     <div style="position: absolute; bottom: 10px; left: 10px; z-index: 1" v-if="selected">
       <v-card rounded width="200">
         <v-card-title class="pb-0" style="text-align: center">
           {{ selectedItem.label }}
         </v-card-title>
-        <div class="pa-2">
+        <div class="pa-4">
           {{ selectedItem.description }}
         </div>
       </v-card>
@@ -104,10 +110,10 @@ export default {
       this.model.highlightPart(this.scene, ...this.componentNames[this.selected]);
     },
 
-    calculatePanelPosition() {
-      let vector3 = new THREE.Vector3( -0.95, -0.95, 0.8).unproject(this.camera);
-      vector3.x -= 0.2;
-      vector3.y -= 0.27;
+    calculateLinePosition() {
+      let vector3 = new THREE.Vector3( -1, -1, 0.8).unproject(this.camera);
+      vector3.x += 0.2;
+      vector3.y += 0.15;
       return vector3
     }
   },
@@ -123,7 +129,7 @@ export default {
           this.panel = undefined;
         }
 
-        this.panel = HighlightPanel.createHighlightPlane(this.calculatePanelPosition(), this.camera, this.scene, this.model, this.componentNames[this.selected][0]);
+        this.panel = HighlightPanel.createHighlightPlane(this.calculateLinePosition(), this.camera, this.scene, this.model, this.componentNames[this.selected][0]);
         this.$emit('panelUpdate', this.panel.updatePanel());
 
       } else {
@@ -139,3 +145,17 @@ export default {
   }
 }
 </script>
+<style>
+.outlinedText {
+  color: white;
+  text-shadow:
+      -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px 1px 0 #000,
+      1px 1px 0 #000;
+}
+
+.v-btn--active {
+  background-color: #8a8a8a !important;
+}
+</style>

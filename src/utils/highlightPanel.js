@@ -18,9 +18,7 @@ function createTrackingLine(pos, model, targetName) {
 export default {
     createHighlightPlane(pos, camera, scene, model, targetName) {
         let line = createTrackingLine(pos, model, targetName);
-
         scene.add( line );
-
 
         return {
             line: line,
