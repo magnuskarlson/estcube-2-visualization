@@ -43,48 +43,52 @@ Mesh.prototype.setOpacity = function (val) {
 };
 
 function setViewpoint(viewpoint) {
-    this.rotation.x = 0.0;
-
     switch (viewpoint) {
         // Front
         case 1: {
-            this.rotation.y = THREE.MathUtils.degToRad(90.0);
-            this.rotation.z = THREE.MathUtils.degToRad(90.0);
+            this.model.rotation.x = 0.0;
+            this.model.rotation.y = THREE.MathUtils.degToRad(90.0);
+            this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
             break;
         }
 
         // Back
         case 2: {
-            this.rotation.y = THREE.MathUtils.degToRad(270.0);
-            this.rotation.z = THREE.MathUtils.degToRad(90.0);
+            this.model.rotation.x = 0.0;
+            this.model.rotation.y = THREE.MathUtils.degToRad(270.0);
+            this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
             break;
         }
 
         // Left
         case 3: {
-            this.rotation.y = THREE.MathUtils.degToRad(0.0);
-            this.rotation.z = THREE.MathUtils.degToRad(90.0);
+            this.model.rotation.x = 0.0;
+            this.model.rotation.y = THREE.MathUtils.degToRad(0.0);
+            this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
             break;
         }
 
         // Right
         case 4: {
-            this.rotation.y = THREE.MathUtils.degToRad(180.0);
-            this.rotation.z = THREE.MathUtils.degToRad(90.0);
+            this.model.rotation.x = 0.0;
+            this.model.rotation.y = THREE.MathUtils.degToRad(180.0);
+            this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
             break;
         }
 
         // Top
         case 5: {
-            this.rotation.y = THREE.MathUtils.degToRad(270.0);
-            this.rotation.z = THREE.MathUtils.degToRad(0.0);
+            this.model.rotation.x = THREE.MathUtils.degToRad(60.0);
+            this.model.rotation.y = THREE.MathUtils.degToRad(90.0);
+            this.model.rotation.z = 0.0;
             break;
         }
 
         // Bottom
         case 6: {
-            this.rotation.y = THREE.MathUtils.degToRad(90.0);
-            this.rotation.z = THREE.MathUtils.degToRad(0.0);
+            this.model.rotation.x = THREE.MathUtils.degToRad(240.0);
+            this.model.rotation.y = THREE.MathUtils.degToRad(90.0);
+            this.model.rotation.z = 0.0;
             break;
         }
     }
