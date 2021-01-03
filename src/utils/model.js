@@ -1,5 +1,6 @@
 import loader from './modelLoader'
 import {Mesh} from "three";
+import * as THREE from "three";
 
 const scale = 0.0008
 
@@ -41,6 +42,54 @@ Mesh.prototype.setOpacity = function (val) {
     }
 };
 
+function setViewpoint(viewpoint) {
+    this.rotation.x = 0.0;
+
+    switch (viewpoint) {
+        // Front
+        case 1: {
+            this.rotation.y = THREE.MathUtils.degToRad(90.0);
+            this.rotation.z = THREE.MathUtils.degToRad(90.0);
+            break;
+        }
+
+        // Back
+        case 2: {
+            this.rotation.y = THREE.MathUtils.degToRad(270.0);
+            this.rotation.z = THREE.MathUtils.degToRad(90.0);
+            break;
+        }
+
+        // Left
+        case 3: {
+            this.rotation.y = THREE.MathUtils.degToRad(0.0);
+            this.rotation.z = THREE.MathUtils.degToRad(90.0);
+            break;
+        }
+
+        // Right
+        case 4: {
+            this.rotation.y = THREE.MathUtils.degToRad(180.0);
+            this.rotation.z = THREE.MathUtils.degToRad(90.0);
+            break;
+        }
+
+        // Top
+        case 5: {
+            this.rotation.y = THREE.MathUtils.degToRad(270.0);
+            this.rotation.z = THREE.MathUtils.degToRad(0.0);
+            break;
+        }
+
+        // Bottom
+        case 6: {
+            this.rotation.y = THREE.MathUtils.degToRad(90.0);
+            this.rotation.z = THREE.MathUtils.degToRad(0.0);
+            break;
+        }
+    }
+}
+
 export default {
     async create() {
         const model = await loader.load("/estcube.fbx");
@@ -63,7 +112,7 @@ export default {
 
         model.highlighted = [];
 
-        model.highlightPart = function (...names) {
+        model.highlightPart = function (scene, ...names) {
             this.setOpacity(0.1);
 
             for (const name of names) {
@@ -82,6 +131,8 @@ export default {
 
             this.highlighted = [];
         }
+
+        model.setViewpoint = setViewpoint;
 
         console.log(model);
 

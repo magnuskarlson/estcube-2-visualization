@@ -27,6 +27,12 @@ export default {
   watch: {
     view() {
       this.$emit("viewChanged", this.view);
+    },
+
+    currentView() {
+      if (this.currentView !== this.view) {
+        this.view = this.currentView;
+      }
     }
   }
 }

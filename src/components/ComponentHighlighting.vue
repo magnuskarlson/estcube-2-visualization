@@ -1,7 +1,6 @@
 <template>
   <v-select
       label="Highlight"
-      multiple
       :items="items"
       item-text="label"
       item-value="name"
@@ -48,7 +47,7 @@ export default {
         ]
       },
 
-      selected: [],
+      selected: undefined,
 
       items: [
         {
@@ -75,25 +74,36 @@ export default {
 
   methods: {
     highlight() {
-      this.model.highlightPart(...this.selected.flatMap(name => this.componentNames[name]));
+      this.model.highlightPart(this.scene, ...this.componentNames[this.selected]);
+    },
+
+    calculatePanelPosition() {
+      let vector3 = new THREE.Vector3( 1, 1, 0.8).unproject(this.camera);
+      vector3.x -= 0.2;
+      vector3.y -= 0.27;
+      return vector3
     }
   },
 
   watch: {
     selected() {
       this.model.resetHighlight();
-      if (this.selected.length) {
+      if (this.selected) {
         this.highlight();
 
-        if (!this.panel) {
-          this.panel = HighlightPanel.createHighlightPlane(new THREE.Vector3(-1, 0, 0), this.camera, this.scene);
+        if (this.panel) {
+          this.panel.destroy();
+          this.panel = undefined;
         }
+
+        this.panel = HighlightPanel.createHighlightPlane(this.calculatePanelPosition(), this.camera, this.scene, this.model, this.componentNames[this.selected][0]);
+        this.$emit('panelUpdate', this.panel.updatePanel());
+
       } else {
         if (this.panel) {
-          this.scene.remove(this.panel);
-          this.panel.geometry.dispose();
-          this.panel.material.dispose();
+          this.panel.destroy();
           this.panel = undefined;
+          this.$emit('panelUpdate', undefined);
         }
 
         console.log("remove panel");

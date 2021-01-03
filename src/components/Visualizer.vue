@@ -6,6 +6,7 @@
             :model="model"
             :camera="camera"
             :scene="scene"
+            @panelUpdate="setPanelUpdate"
         />
       </v-col>
     </v-row>
@@ -60,12 +61,11 @@
 import * as THREE from 'three'
 import camera from '@/utils/camera'
 import model from '@/utils/model'
-import ViewPositions from "@/components/ViewPositions";
 import ComponentHighlighting from "@/components/ComponentHighlighting";
 
 export default {
   name: 'Visualizer',
-  components: {ComponentHighlighting, ViewPositions},
+  components: {ComponentHighlighting},
   data() {
     return {
       t: THREE,
@@ -76,6 +76,7 @@ export default {
       scene: undefined,
       cube: undefined,
       viewAngels: [
+        {name: 'Rotating', action: 7},
         {name: 'Default', action: 0},
         {name: 'Front', action: 1},
         {name: 'Back', action: 2},
@@ -83,19 +84,20 @@ export default {
         {name: 'Right', action: 4},
         {name: 'Top', action: 5},
         {name: 'Bottom', action: 6}],
-      currentView: 0,
+      currentView: 7,
       mouseDown: false,
       mousePos: [0, 0],
 
       model: undefined,
 
-      panel: undefined
+      panel: undefined,
+      panelUpdate: undefined
     }
   },
   async mounted() {
     this.canvas = document.querySelector("#c");
 
-    this.renderer = new THREE.WebGLRenderer({canvas: this.canvas, alpha: true});
+    this.renderer = new THREE.WebGLRenderer({canvas: this.canvas, alpha: true, logarithmicDepthBuffer: true});
     this.renderer.setSize(this.canvas.width, this.canvas.height, false);
 
     this.scene = new THREE.Scene();
@@ -125,11 +127,23 @@ export default {
     window.addEventListener("mousewheel", this.updateCamera);
   },
 
+  created() {
+    window.addEventListener("resize", this.resizeHandler);
+  },
+
+  destroyed() {
+    window.removeEventListener("resize", this.resizeHandler);
+  },
+
   methods: {
     onMouseDown(event) {
       event.preventDefault();
       this.mousePos = [event.clientX, event.clientY];
       this.mouseEvent = event.which;
+    },
+
+    resizeHandler() {
+      this.resizeCanvasToDisplaySize();
     },
 
     viewChanged(val) {
@@ -148,61 +162,24 @@ export default {
       if (this.mouseEvent === 2) {
         this.model.position.x += mouseDelta[0] * 0.005;
         this.model.position.y += mouseDelta[1] * -0.005;
+        this.currentView = 0;
       }
       if (this.mouseEvent === 1) {
         this.model.rotation.x += THREE.MathUtils.degToRad(mouseDelta[1]);
         this.model.rotation.y += THREE.MathUtils.degToRad(mouseDelta[0]);
+        this.currentView = 0;
       }
+
+
     },
 
+    setPanelUpdate(func){
+      this.panelUpdate = func;
+    },
     // Changes object rotation
     changeViewpoint(viewpoint) {
       this.currentView = viewpoint;
-
-      this.model.rotation.x = 0.0;
-      switch (viewpoint) {
-          // Front
-        case 1: {
-          this.model.rotation.y = THREE.MathUtils.degToRad(90.0);
-          this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
-          break;
-        }
-
-          // Back
-        case 2: {
-          this.model.rotation.y = THREE.MathUtils.degToRad(270.0);
-          this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
-          break;
-        }
-
-          // Left
-        case 3: {
-          this.model.rotation.y = THREE.MathUtils.degToRad(0.0);
-          this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
-          break;
-        }
-
-          // Right
-        case 4: {
-          this.model.rotation.y = THREE.MathUtils.degToRad(180.0);
-          this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
-          break;
-        }
-
-          // Top
-        case 5: {
-          this.model.rotation.y = THREE.MathUtils.degToRad(270.0);
-          this.model.rotation.z = THREE.MathUtils.degToRad(0.0);
-          break;
-        }
-
-          // Bottom
-        case 6: {
-          this.model.rotation.y = THREE.MathUtils.degToRad(90.0);
-          this.model.rotation.z = THREE.MathUtils.degToRad(0.0);
-          break;
-        }
-      }
+      this.model.setViewpoint(viewpoint);
     },
 
     updateCamera(event) {
@@ -220,7 +197,7 @@ export default {
       switch (this.currentView) {
 
           // Default - rotation
-        case 0: {
+        case 7: {
           if (!this.mouseDown) {
             this.model.rotation.y += THREE.MathUtils.degToRad(1.0);
             this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
@@ -228,6 +205,11 @@ export default {
           break;
         }
       }
+
+      if (this.panelUpdate) {
+        this.panelUpdate();
+      }
+
       this.renderer.render(this.scene, this.camera);
     },
 
