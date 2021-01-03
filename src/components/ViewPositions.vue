@@ -1,14 +1,19 @@
 <template>
-  <v-select
-    style="z-index: 1; background: white;"
-    filled
-    v-model="view"
-    hide-details
-    :items="viewAngels"
-    item-text="name"
-    item-value="action"
-    label="Viewpoint"
-  ></v-select>
+  <div>
+    <v-tooltip bottom v-for="btn in btns" :key="btn.id">
+      <template v-slot:activator="{ on, attrs }">
+        <v-img :src="btn.img"
+               v-bind="attrs"
+               v-on="on"
+               width="64px"
+               height="64px"
+               style="z-index: 1; display: inline-block; cursor: pointer;"
+               @click="changeView(btn.action)"
+        ></v-img>
+      </template>
+      <span>{{ btn.text }}</span>
+    </v-tooltip>
+  </div>
 </template>
 <script>
 export default {
@@ -18,21 +23,24 @@ export default {
     viewAngels: {}
   },
 
-  data() {
-    return {
-      view: this.currentView
+  methods:{
+    changeView(view){
+      this.$emit("viewChanged", view);
     }
   },
 
-  watch: {
-    view() {
-      this.$emit("viewChanged", this.view);
-    },
-
-    currentView() {
-      if (this.currentView !== this.view) {
-        this.view = this.currentView;
-      }
+  data() {
+    return {
+      view: this.currentView,
+      btns: [
+        {img: require('../assets/views/default.png'), text: 'Default', action: 0},
+        {img: require('../assets/views/front.png'), text: 'Front', action: 1},
+        {img: require('../assets/views/back.png'), text: 'Back', action: 2},
+        {img: require('../assets/views/left.png'), text: 'Left', action: 3},
+        {img: require('../assets/views/right.png'), text: 'Right', action: 4},
+        {img: require('../assets/views/top.png'), text: 'Top', action: 5},
+        {img: require('../assets/views/bottom.png'), text: 'Bottom', action: 6},
+      ]
     }
   }
 }
