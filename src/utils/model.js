@@ -46,49 +46,49 @@ function setViewpoint(viewpoint) {
     switch (viewpoint) {
         // Front
         case 1: {
-            this.model.rotation.x = 0.0;
-            this.model.rotation.y = THREE.MathUtils.degToRad(90.0);
-            this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
+            this.rotation.x = 0.0;
+            this.rotation.y = THREE.MathUtils.degToRad(90.0);
+            this.rotation.z = THREE.MathUtils.degToRad(90.0);
             break;
         }
 
         // Back
         case 2: {
-            this.model.rotation.x = 0.0;
-            this.model.rotation.y = THREE.MathUtils.degToRad(270.0);
-            this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
+            this.rotation.x = 0.0;
+            this.rotation.y = THREE.MathUtils.degToRad(270.0);
+            this.rotation.z = THREE.MathUtils.degToRad(90.0);
             break;
         }
 
         // Left
         case 3: {
-            this.model.rotation.x = 0.0;
-            this.model.rotation.y = THREE.MathUtils.degToRad(0.0);
-            this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
+            this.rotation.x = 0.0;
+            this.rotation.y = THREE.MathUtils.degToRad(0.0);
+            this.rotation.z = THREE.MathUtils.degToRad(90.0);
             break;
         }
 
         // Right
         case 4: {
-            this.model.rotation.x = 0.0;
-            this.model.rotation.y = THREE.MathUtils.degToRad(180.0);
-            this.model.rotation.z = THREE.MathUtils.degToRad(90.0);
+            this.rotation.x = 0.0;
+            this.rotation.y = THREE.MathUtils.degToRad(180.0);
+            this.rotation.z = THREE.MathUtils.degToRad(90.0);
             break;
         }
 
         // Top
         case 5: {
-            this.model.rotation.x = THREE.MathUtils.degToRad(60.0);
-            this.model.rotation.y = THREE.MathUtils.degToRad(90.0);
-            this.model.rotation.z = 0.0;
+            this.rotation.x = THREE.MathUtils.degToRad(60.0);
+            this.rotation.y = THREE.MathUtils.degToRad(90.0);
+            this.rotation.z = 0.0;
             break;
         }
 
         // Bottom
         case 6: {
-            this.model.rotation.x = THREE.MathUtils.degToRad(240.0);
-            this.model.rotation.y = THREE.MathUtils.degToRad(90.0);
-            this.model.rotation.z = 0.0;
+            this.rotation.x = THREE.MathUtils.degToRad(240.0);
+            this.rotation.y = THREE.MathUtils.degToRad(90.0);
+            this.rotation.z = 0.0;
             break;
         }
     }
